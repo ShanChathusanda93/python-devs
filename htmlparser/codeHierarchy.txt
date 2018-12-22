@@ -1,0 +1,26 @@
+Decl: DOCTYPE html
+Start tag: html
+Start tag: head
+Start tag: title
+       Data:My Templet
+End tag: title
+Start tag: link
+   attr: ('rel', 'stylesheet')
+   attr: ('type', 'text/css')
+   attr: ('href', 'http://localhost/project/Blog/Templet/CSS/frontend.css')
+End tag: head
+Start tag: body
+Start tag: div
+   attr: ('class', 'jumbotron')
+Start tag: div
+   attr: ('class', 'container text-center')
+Start tag: br
+Start tag: img
+   attr: ('src', 'http://localhost/project/Blog/Images/katapath_pawra.png')
+   attr: ('style', 'width: 500px;')
+Start tag: p
+   attr: ('style', 'color: black;')
+       Data:write your heart...
+End tag: p
+End tag: div
+End tag: div
