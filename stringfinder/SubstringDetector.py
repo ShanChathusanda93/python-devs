@@ -5,46 +5,45 @@ from  bs4 import BeautifulSoup
 # result = re.search('asdf=5;(.*)123jasd', s)
 # print(result.group(1))
 
-string = "<?php session_start();" \
-         "include 'login_phpcode.php'
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>LMS Login</title>
-  <?php include '../Template/Bootstrap/bootstrap.php'; ?>
-  <link rel="stylesheet" type="text/css" href="login.css">
-  <link rel="stylesheet" type="text/css" href="http://localhost/project/Blog/Templet/CSS/frontend.css">
-</head>
-
-<body>
-<?php include '../Template/Navigation/frontend_navigation.php'; ?>
-<div class="container-home" style="background-image:url(http://localhost/project/Blog/Images/img2.png);
-background-positon:50% 50%; background-attachment:fixed; background-repeat:no-repeat; background-size:cover;">
-        <div class="container">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <br><br><br><br>
-                <hr>
-            </div>
-            <div class="col-md-4 text-center">
-                <br><br>
-                <?php include 'login_form.php'; ?>
-            </div>
-            <div class="col-md-4 text-center">
-                <br><br><br><br>
-                <hr>
-            </div>
-        </div>
-        </div>
-
-
-    </div>
-<!-- Footer -->
-<?php include '../Template/Footer/footer.php'; ?>
-</body>
-</html>"
+string = "<?php session_start(); include 'login_phpcode.php'"
+# ?>
+#
+# <!DOCTYPE html>
+# <html lang="en">
+# <head>
+#   <title>LMS Login</title>
+#   <?php include '../Template/Bootstrap/bootstrap.php'; ?>
+#   <link rel="stylesheet" type="text/css" href="login.css">
+#   <link rel="stylesheet" type="text/css" href="http://localhost/project/Blog/Templet/CSS/frontend.css">
+# </head>
+#
+# <body>
+# <?php include '../Template/Navigation/frontend_navigation.php'; ?>
+# <div class="container-home" style="background-image:url(http://localhost/project/Blog/Images/img2.png);
+# background-positon:50% 50%; background-attachment:fixed; background-repeat:no-repeat; background-size:cover;">
+#         <div class="container">
+#         <div class="row">
+#             <div class="col-md-4 text-center">
+#                 <br><br><br><br>
+#                 <hr>
+#             </div>
+#             <div class="col-md-4 text-center">
+#                 <br><br>
+#                 <?php include 'login_form.php'; ?>
+#             </div>
+#             <div class="col-md-4 text-center">
+#                 <br><br><br><br>
+#                 <hr>
+#             </div>
+#         </div>
+#         </div>
+#
+#
+#     </div>
+# <!-- Footer -->
+# <?php include '../Template/Footer/footer.php'; ?>
+# </body>
+# </html>"
 result = re.findall('<\?php([A-Za-z0-9.*\\\/+\"_=,;()\'$&!\[\]\n{\}<>%\-:#\s\n{\};\u00A9])+\?>',
                     string)
 for r in result:
