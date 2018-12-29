@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 
 def duplicate_detector():
+    # --remove the duplicate files from the extracted include file path list
     with open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder/includeFileList.txt",
               "r") as file:
         include_file_list = file.read()
@@ -11,6 +12,7 @@ def duplicate_detector():
                             "/non_redundant_includes.txt", "w+")
         cleaned_list.write(file_list)
 
+    # --remove the duplicate files fromm the extracted require files
     with open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder/requiredFileList.txt",
               "r") as file:
         required_file_list = file.read()
