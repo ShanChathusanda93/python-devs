@@ -7,6 +7,7 @@ import re
 # --filePaths in ubuntu
 filePath = "/home/shan/Developments/Projects/research-devs/Blog/Frontend/frontend.php"
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_phpcode.php"
+# filePath = "/home/shan/Developments/Projects/research-devs/Blog/Template/Navigation/frontend_navigation.php"
 
 with open(filePath, "r", encoding="utf8") as file:
     orig = file.read()
@@ -32,15 +33,35 @@ try:
     if not os.path.exists(targetPhpDirPath):
         os.mkdir(targetPhpDirPath, access_rights)
 
+    # --creating the target directory for the altered source code
+    targetAlteredSrcDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/alteredSrc"
+    if not os.path.exists(targetAlteredSrcDirPath):
+        os.mkdir(targetAlteredSrcDirPath, access_rights)
+
     # --path for each source files php snippets
     targetFileDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets/" + \
                         fileNameBase
 
     occurrences = re.findall('<\?php(.*?)\?>', text)
     for occurrence in occurrences:
-        # --creating the directory for each source file
+        # --creating the directory for each php source file
         if not os.path.exists(targetFileDirPath):
             os.mkdir(targetFileDirPath, access_rights)
+
+        # --searching for includes and requires in the occurrence
+        includeFiles = re.findall('include \'(.*?)\';', occurrence)
+        baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
+        for includeFile in includeFiles:
+            if "../" in includeFile:
+                includeFilePath = includeFile.replace('..', baseSourcePath)
+            else:
+                includeFilePath = baseSourcePath + "/Frontend/" + includeFile
+
+            with open(includeFilePath, "r") as inclFile:
+                incl = inclFile.read()
+                print(includeFilePath)
+                print(incl)
+                inclFile.close()
 
         # --file name of the target php file
         fileName = targetFileDirPath + "/" + fileNameBase + "_php_part_" + str(i) + ".php"
@@ -48,7 +69,7 @@ try:
         # --editing the places with the php codes extracted in the source code by putting the references
         alteredPhp = text.replace("<?php" + occurrence + "?>", "<php> include '.." + fileName + "';</php>")
         alteredSrcCode = alteredPhp.replace("\"", "\'")
-        with open("alteredSrcFile.txt", "a") as alteredSrc:
+        with open(targetAlteredSrcDirPath + "/altered_" + fileNameBase + ".txt", "a") as alteredSrc:
             alteredSrc.write(alteredSrcCode)
 
         with open(fileName, "w") as writingFile:

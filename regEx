@@ -1,0 +1,2 @@
+regEx for comment recognition
+(\/\*((\n|\s)(.*?))\*\/)|(\/\/(\s)(.*?))
