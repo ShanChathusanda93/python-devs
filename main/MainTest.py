@@ -26,7 +26,7 @@
 # dirPath = os.path.dirname(path)
 # print(dirPath)
 
-# from stringfinder.ReferenceFinder import ReferenceFinder
+# from stringFinder.ReferenceFinder import ReferenceFinder
 #
 # ref_det = ReferenceFinder
 # ref_det.reference_detector(ref_det)
@@ -43,10 +43,15 @@
 # cmnts = re.search(r'(\/*(.|[\r\n])*?(\*\/))', orig)
 # print(cmnts.group(0))
 
-from stringfinder.DuplicateFileDetector import duplicate_detector
+from stringFinder.DuplicateFileDetector import duplicate_detector
+from stringFinder.ReferenceFinder import ReferenceFinder
 
-duplicate_detector()
-
-
-
-
+# duplicate_detector()
+ref_find = ReferenceFinder
+file = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/non_redundant_includes.txt", "r")
+files = file.read().splitlines()
+values = ref_find.has_include(ref_find, files)
+for file_list in values:
+    for f in file_list:
+        print(f)
+    print("\n")
