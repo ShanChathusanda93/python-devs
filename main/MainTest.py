@@ -51,7 +51,16 @@ ref_find = ReferenceFinder
 file = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/non_redundant_includes.txt", "r")
 files = file.read().splitlines()
 values = ref_find.has_include(ref_find, files)
-for file_list in values:
-    for f in file_list:
-        print(f)
+
+for index, file_list in enumerate(values):
+    if index == 0:
+        print("no_includes_files")
+        for f in file_list:
+            print(f)
+        print(file_list.__len__())
+    elif index == 1:
+        print("has_includes_files")
+        for f in file_list:
+            print(f)
+        print(file_list.__len__())
     print("\n")

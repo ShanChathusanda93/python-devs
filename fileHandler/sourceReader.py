@@ -1,12 +1,14 @@
 import os
-import re
+
+from stringFinder.ReferenceFinder import ReferenceFinder
 
 # --filePaths in windows
 # filePath = "C:\\xampp\\htdocs\\Blog\\Frontend\\frontend.php"
 # filePath = "C:\\xampp\\htdocs\\Blog\\Login System\\login_phpcode.php"
 # --filePaths in ubuntu
-filePath = "/home/shan/Developments/Projects/research-devs/Blog/Frontend/frontend.php"
+# filePath = "/home/shan/Developments/Projects/research-devs/Blog/Frontend/frontend.php"
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_phpcode.php"
+filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_form.php"
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Template/Navigation/frontend_navigation.php"
 
 with open(filePath, "r", encoding="utf8") as file:
@@ -15,13 +17,8 @@ with open(filePath, "r", encoding="utf8") as file:
 
 # --develop a for loop for this section for the try block
 try:
-    # --finding the page title or the file name to create the new file
-    uploadedFileTitle = re.findall('<title>(.*?)</title>', text)
-    if uploadedFileTitle.__len__() == 0:
-        tempBasePath = os.path.basename(filePath)
-        fileNameBase = os.path.splitext(tempBasePath)[0].replace(' ', '_')
-    else:
-        fileNameBase = uploadedFileTitle[0].replace(' ', '_')
+    tempBasePath = os.path.basename(filePath)
+    fileNameBase = os.path.splitext(tempBasePath)[0].replace(' ', '_')
 
     # --iterator
     i = 1
@@ -42,48 +39,63 @@ try:
     targetFileDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets/" + \
                         fileNameBase
 
-    occurrences = re.findall('<\?php(.*?)\?>', text)
-    for occurrence in occurrences:
+    # occurrences = re.findall('<\?php(.*?)\?>', text)
+    php_occurrences = ReferenceFinder.php_detector(ReferenceFinder, text)
+    included_files = ReferenceFinder.include_detector(ReferenceFinder, php_occurrences, source_dir_path="/",
+                                                      need_compl_path=False)
+    required_files = ReferenceFinder.require_detector(ReferenceFinder, php_occurrences, source_dir_path="/",
+                                                      need_compl_path=False)
+
+    if php_occurrences.__len__() > 0:
         # --creating the directory for each php source file
         if not os.path.exists(targetFileDirPath):
             os.mkdir(targetFileDirPath, access_rights)
+        if included_files.__len__() == 0 and required_files.__len__() == 0:
+            alteredPhp = text
+            for occurrence in php_occurrences:
+                # --file name of the target php file
+                fileName = targetFileDirPath + "/" + fileNameBase + "_php_part_" + str(i) + ".php"
 
-        # --searching for includes and requires in the occurrence
-        includeFiles = re.findall('include \'(.*?)\';', occurrence)
-        baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
-        for includeFile in includeFiles:
-            if "../" in includeFile:
-                includeFilePath = includeFile.replace('..', baseSourcePath)
-            else:
-                includeFilePath = baseSourcePath + "/Frontend/" + includeFile
+                # --editing the places with the php codes extracted in the source code by putting the references
+                text = text.replace("<?php" + occurrence + "?>", "<php> include '.." + fileName + "';</php>")
+                text = text.replace("\"", "\'")
 
-            with open(includeFilePath, "r") as inclFile:
-                incl = inclFile.read()
-                print(includeFilePath)
-                print(incl)
-                inclFile.close()
+                with open(fileName, "w") as writingFile:
+                    # --retouching the extracted php source code
+                    retouchNew = occurrence.replace(';', ';\n\t')
+                    retouchBrac = retouchNew.replace('{', '{\n\t')
+                    retouchReq = retouchBrac.replace('require_once', '\nrequire_once')
+                    retouchIf = retouchReq.replace('if(', '\t\nif(')
 
-        # --file name of the target php file
-        fileName = targetFileDirPath + "/" + fileNameBase + "_php_part_" + str(i) + ".php"
-
-        # --editing the places with the php codes extracted in the source code by putting the references
-        alteredPhp = text.replace("<?php" + occurrence + "?>", "<php> include '.." + fileName + "';</php>")
-        alteredSrcCode = alteredPhp.replace("\"", "\'")
-        with open(targetAlteredSrcDirPath + "/altered_" + fileNameBase + ".txt", "a") as alteredSrc:
-            alteredSrc.write(alteredSrcCode)
-
-        with open(fileName, "w") as writingFile:
-            # --retouching the extracted php source code
-            retouchNew = occurrence.replace(';', ';\n\t')
-            retouchBrac = retouchNew.replace('{', '{\n\t')
-            retouchReq = retouchBrac.replace('require_once', '\nrequire_once')
-            retouchIf = retouchReq.replace('if(', '\t\nif(')
-
-            writingFile.write("<?php\n" + retouchIf + "\n?>")
-            writingFile.close()
-        i = i + 1
+                    writingFile.write("<?php\n" + retouchIf + "\n?>")
+                    writingFile.close()
+                i = i + 1
+            with open(targetAlteredSrcDirPath + "/altered_" + fileNameBase + ".txt", "w") as alteredSrc:
+                alteredSrc.write(text)
 except AttributeError:
     occurrence = 'Not occurrence in the original string'
     print(occurrence)
 
 file.close()
+
+# --finding the page title or the file name to create the new file
+# uploadedFileTitle = re.findall('<title>(.*?)</title>', text)
+# if uploadedFileTitle.__len__() == 0:
+
+# else:
+#     fileNameBase = uploadedFileTitle[0].replace(' ', '_')
+
+# # --searching for includes and requires in the occurrence
+# includeFiles = re.findall('include \'(.*?)\';', occurrence)
+# baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
+# for includeFile in includeFiles:
+#     if "../" in includeFile:
+#         includeFilePath = includeFile.replace('..', baseSourcePath)
+#     else:
+#         includeFilePath = baseSourcePath + "/Frontend/" + includeFile
+#
+#     with open(includeFilePath, "r") as inclFile:
+#         incl = inclFile.read()
+#         # print(includeFilePath)
+#         # print(incl)
+#         inclFile.close()

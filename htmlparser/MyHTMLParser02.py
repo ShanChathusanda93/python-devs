@@ -47,7 +47,7 @@ class MyHTMLParser02(HTMLParser):
 
 
 parser = MyHTMLParser02()
-filePath = "/home/shan/Developments/Projects/research-devs/Blog/Template/Navigation/frontend_navigation.php"
+filePath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/alteredSrc/altered_login_form.txt"
 access_rights = 0o777
 file = open(filePath, "r", access_rights, encoding="utf8")
 orig = file.read()

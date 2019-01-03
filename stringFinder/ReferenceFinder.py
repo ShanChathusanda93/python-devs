@@ -32,7 +32,7 @@ class ReferenceFinder:
                 source_code = source_file.read().replace("\n", " ")
                 source_dir_path = os.path.dirname(file)
             php_occurrences = self.php_detector(self, source_code)
-            complete_includes = self.include_detector(self, php_occurrences, source_dir_path)
+            complete_includes = self.include_detector(self, php_occurrences, source_dir_path, True)
             complete_requires = self.require_detector(self, php_occurrences, source_dir_path)
 
             if complete_includes.__len__() != 0:
@@ -57,24 +57,38 @@ class ReferenceFinder:
         return occurrences
 
     # --detect include files from the provided php occurrences and returns the include file path list
-    def include_detector(self, php_occurrences, source_dir_path):
+    def include_detector(self, php_occurrences, source_dir_path, need_compl_path):
         complete_includes = []
         for occurrence in php_occurrences:
             includes = re.findall('include \'(.*?)\';', occurrence)
-            if includes.__len__() != 0:
-                complete_includes.append(self.path_completer(self, includes, source_dir_path))
+            if need_compl_path:
+                if includes.__len__() != 0:
+                    complete_includes.append(self.path_completer(self, includes, source_dir_path))
+            else:
+                if includes.__len__() != 0:
+                    complete_includes.append(includes)
         return complete_includes
 
     # --detect require_once and require files from the provided php occurrences and returns the file path list
-    def require_detector(self, php_occurrences, source_dir_path):
+    def require_detector(self, php_occurrences, source_dir_path, need_compl_path):
         complete_requires = []
         for occurrence in php_occurrences:
             require_once = re.findall('require_once \'(.*?)\';', occurrence)
-            if require_once.__len__() != 0:
-                complete_requires.append(self.path_completer(self, require_once, source_dir_path))
+            if need_compl_path:
+                if require_once.__len__() != 0:
+                    complete_requires.append(self.path_completer(self, require_once, source_dir_path))
+            else:
+                for r in require_once:
+                    complete_requires.append(r)
+
             requires = re.findall("require \'(.*?)\';", occurrence)
-            if requires.__len__() != 0:
-                complete_requires.append(self.path_completer(self, requires, source_dir_path))
+            if need_compl_path:
+                if requires.__len__() != 0:
+                    complete_requires.append(self.path_completer(self, requires, source_dir_path))
+            else:
+                for r in requires:
+                    complete_requires.append(r)
+
         return complete_requires
 
     # --complete the paths from the relative paths to original paths and returns the file paths
@@ -92,18 +106,17 @@ class ReferenceFinder:
         has_includes_files = []
         return_values = []
         source_path = "/home/shan/Developments/Projects/research-devs/Blog"
-        # for file_path in file_path_list:
-        file_path = "/home/shan/Developments/Projects/research-devs/Blog/User/user profile detail/edit_profile.php"
-        file = open(file_path, "r")
-        source_code = file.read()
-        php_occurrences = self.php_detector(self, source_code)
-        includes_occurrences = self.include_detector(self, php_occurrences, source_path)
-        require_occurrences = self.require_detector(self, php_occurrences, source_path)
+        for file_path in file_path_list:
+            file = open(file_path, "r")
+            source_code = file.read()
+            php_occurrences = self.php_detector(self, source_code)
+            includes_occurrences = self.include_detector(self, php_occurrences, source_path)
+            require_occurrences = self.require_detector(self, php_occurrences, source_path)
 
-        if includes_occurrences.__len__() == 0 and require_occurrences.__len__() == 0:
-            no_includes_files.append(file_path)
-        else:
-            has_includes_files.append(file_path)
+            if includes_occurrences.__len__() == 0 and require_occurrences.__len__() == 0:
+                no_includes_files.append(file_path)
+            else:
+                has_includes_files.append(file_path)
         return_values.append(no_includes_files)
         return_values.append(has_includes_files)
         return return_values
