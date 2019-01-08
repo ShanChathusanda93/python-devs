@@ -63,7 +63,7 @@ class ReferenceFinder:
             includes = re.findall('include \'(.*?)\';', occurrence)
             if need_compl_path:
                 if includes.__len__() != 0:
-                    complete_includes.append(self.path_completer(self, includes, source_dir_path))
+                    complete_includes.append(self.path_completer(includes, source_dir_path))
             else:
                 if includes.__len__() != 0:
                     complete_includes.append(includes)

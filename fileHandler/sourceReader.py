@@ -8,7 +8,7 @@ from stringFinder.ReferenceFinder import ReferenceFinder
 # --filePaths in ubuntu
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Frontend/frontend.php"
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_phpcode.php"
-filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_form.php"
+filePath = "/home/shan/Developments/Projects/research-devs/Blog/Login System/config.php"
 # filePath = "/home/shan/Developments/Projects/research-devs/Blog/Template/Navigation/frontend_navigation.php"
 
 with open(filePath, "r", encoding="utf8") as file:
