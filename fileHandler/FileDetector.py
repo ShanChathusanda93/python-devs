@@ -24,6 +24,7 @@ class FileDetector:
     # --in order get the service from this function, the table name that contains the users must be known
     # --this function will detect the files which are connected with the login
     def detect_access_files(self, file_list, user_table_name):
+        access_files = []
         for file in file_list:
             with open(file, "r") as source_file:
                 orig = source_file.read()
@@ -31,36 +32,55 @@ class FileDetector:
 
             # --this condition will detect the database connection file
             if re.findall("mysqli_connect\(", source).__len__() > 0:
-                print("connection i===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
             elif re.findall("mysql_connect\(", source).__len__() > 0:
-                print("connection ===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
 
             # --these conditions will select the files which are connected to the table that contains the user data
             if re.findall("select(.*?)" + user_table_name, source).__len__() > 0:
-                print("select ===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                self.print_list(connected_files)
+                for c_file in connected_files:
+                    if not any(c_file in a_file for a_file in access_files):
+                        access_files.append(c_file)
+
             if re.findall("insert(.*?)" + user_table_name, source).__len__() > 0:
-                print("insert ===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                self.print_list(connected_files)
+                for c_file in connected_files:
+                    if not any(c_file in a_file for a_file in access_files):
+                        access_files.append(c_file)
+
             if re.findall("update(.*?)" + user_table_name, source).__len__() > 0:
-                print("update ===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                self.print_list(connected_files)
+                for c_file in connected_files:
+                    if not any(c_file in a_file for a_file in access_files):
+                        access_files.append(c_file)
+
             if re.findall("delete(.*?)" + user_table_name, source).__len__() > 0:
-                print("delete ===> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                self.print_list(connected_files)
+                for c_file in connected_files:
+                    if not any(c_file in a_file for a_file in access_files):
+                        access_files.append(c_file)
 
             # --this condition can detect the files which contains the input type as password
             if re.findall("<input(.*?)password", source).__len__() > 0:
-                print("have input type as password ====> " + file)
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
 
             # --this condition can detect the logout files
             if re.findall("session_destroy", source).__len__() > 0:
-                print("logout ====> " + file)
-            # --not yet completed
+                if not any(file in a_file for a_file in access_files):
+                    access_files.append(file)
+        return access_files
 
     def get_file_name(self, file):
         base = os.path.basename(file)
