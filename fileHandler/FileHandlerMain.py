@@ -5,5 +5,11 @@ fileDetector = FileDetector()
 file_list = ["/home/shan/Developments/Projects/research-devs/Blog/Login System/login_phpcode.php",
              "/home/shan/Developments/Projects/research-devs/Blog/Login System/register_phpcode.php",
              "/home/shan/Developments/Projects/research-devs/Blog/Login System/login.php",
-             "/home/shan/Developments/Projects/research-devs/Blog/Login System/register.php"]
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/register.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/login_form.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/register_form.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/sign_form.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/sign_phpcode.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/logout.php",
+             "/home/shan/Developments/Projects/research-devs/Blog/Login System/config.php"]
 fileDetector.detect_access_files(file_list, "user_login")

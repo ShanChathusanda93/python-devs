@@ -29,6 +29,12 @@ class FileDetector:
                 orig = source_file.read()
             source = orig.replace("\n", " ")
 
+            # --this condition will detect the database connection file
+            if re.findall("mysqli_connect\(", source).__len__() > 0:
+                print("connection i===> " + file)
+            elif re.findall("mysql_connect\(", source).__len__() > 0:
+                print("connection ===> " + file)
+
             # --these conditions will select the files which are connected to the table that contains the user data
             if re.findall("select(.*?)" + user_table_name, source).__len__() > 0:
                 print("select ===> " + file)
@@ -47,6 +53,13 @@ class FileDetector:
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
                 self.print_list(connected_files)
 
+            # --this condition can detect the files which contains the input type as password
+            if re.findall("<input(.*?)password", source).__len__() > 0:
+                print("have input type as password ====> " + file)
+
+            # --this condition can detect the logout files
+            if re.findall("session_destroy", source).__len__() > 0:
+                print("logout ====> " + file)
             # --not yet completed
 
     def get_file_name(self, file):
