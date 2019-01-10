@@ -30,7 +30,7 @@ class FileDetector:
                 orig = source_file.read()
             source = orig.replace("\n", " ")
 
-            # --this condition will detect the database connection file
+            # --this condition will detect the database connection file without duplicates
             if re.findall("mysqli_connect\(", source).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
@@ -39,6 +39,7 @@ class FileDetector:
                     access_files.append(file)
 
             # --these conditions will select the files which are connected to the table that contains the user data
+            # --without duplicates
             if re.findall("select(.*?)" + user_table_name, source).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
@@ -71,12 +72,12 @@ class FileDetector:
                     if not any(c_file in a_file for a_file in access_files):
                         access_files.append(c_file)
 
-            # --this condition can detect the files which contains the input type as password
+            # --this condition can detect the files which contains the input type as password without duplicates
             if re.findall("<input(.*?)password", source).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
 
-            # --this condition can detect the logout files
+            # --this condition can detect the logout files without duplicates
             if re.findall("session_destroy", source).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
