@@ -14,4 +14,6 @@ fileDetector = FileDetector()
 #              "/home/shan/Developments/Projects/research-devs/Blog/Login System/config.php"]
 with open("/home/shan/Developments/Projects/research-devs/python-devs/main/sourceList.txt", "r") as source_files:
     file_list = source_files.read().splitlines()
-fileDetector.detect_access_files(file_list, "user_login")
+files = fileDetector.detect_access_files(file_list, "user_login")
+for file in files:
+    print(file)
