@@ -31,16 +31,16 @@ class FileDetector:
             source = orig.replace("\n", " ")
 
             # --this condition will detect the database connection file without duplicates
-            if re.findall("mysqli_connect\(", source).__len__() > 0:
+            if re.findall("mysqli_connect\(", source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
-            elif re.findall("mysql_connect\(", source).__len__() > 0:
+            elif re.findall("mysql_connect\(", source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
 
             # --these conditions will select the files which are connected to the table that contains the user data
             # --without duplicates
-            if re.findall("select(.*?)" + user_table_name, source).__len__() > 0:
+            if re.findall("select(.*?)" + user_table_name, source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
@@ -48,7 +48,7 @@ class FileDetector:
                     if not any(c_file in a_file for a_file in access_files):
                         access_files.append(c_file)
 
-            if re.findall("insert(.*?)" + user_table_name, source).__len__() > 0:
+            if re.findall("insert(.*?)" + user_table_name, source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
@@ -56,7 +56,7 @@ class FileDetector:
                     if not any(c_file in a_file for a_file in access_files):
                         access_files.append(c_file)
 
-            if re.findall("update(.*?)" + user_table_name, source).__len__() > 0:
+            if re.findall("update(.*?)" + user_table_name, source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
@@ -64,7 +64,7 @@ class FileDetector:
                     if not any(c_file in a_file for a_file in access_files):
                         access_files.append(c_file)
 
-            if re.findall("delete(.*?)" + user_table_name, source).__len__() > 0:
+            if re.findall("delete(.*?)" + user_table_name, source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
                 connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
@@ -73,12 +73,12 @@ class FileDetector:
                         access_files.append(c_file)
 
             # --this condition can detect the files which contains the input type as password without duplicates
-            if re.findall("<input(.*?)password", source).__len__() > 0:
+            if re.findall("<input(.*?)password", source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
 
             # --this condition can detect the logout files without duplicates
-            if re.findall("session_destroy", source).__len__() > 0:
+            if re.findall("session_destroy", source.lower()).__len__() > 0:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
         return access_files
