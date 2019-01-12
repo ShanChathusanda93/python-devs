@@ -1,0 +1,18 @@
+/home/shan/Developments/Projects/research-devs/Blog/Template/Bootstrap/bootstrap.php
+/home/shan/Developments/Projects/research-devs/Blog/Template/Navigation/frontend_navigation.php
+/home/shan/Developments/Projects/research-devs/Blog/Template/Footer/footer.php
+/home/shan/Developments/Projects/research-devs/Blog/Frontend/vedio.php
+/home/shan/Developments/Projects/research-devs/Blog/post views/view_post_image_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/post views/view_post_text_image_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/post views/view_posttext_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_image_form.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_image_display.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/view_post_image_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_image.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/view_post_text_image_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_text_image_form.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_text_image_display.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/view_posttext_phpcode.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/posttext.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/posttext_form.php
+/home/shan/Developments/Projects/research-devs/Blog/User/post/post_text_image.php

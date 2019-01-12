@@ -8,46 +8,48 @@ class ReferenceFinder:
     baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
 
     # --main method that detect the includes, required and require_once files
-    def reference_detector(self):
+    def references_detector(self, file_list, avoided_files):
         # --open extracted source file path list
-        with open("/home/shan/Developments/Projects/research-devs/python-devs/main/sourceList.txt",
-                  "r") as source_files:
-            file_list = source_files.read().splitlines()
-            source_files.close()
-        # --for testing purposes
-        # file_list = ["/home/shan/Developments/Projects/research-devs/Blog/User/post/post_text_image_view.php",
-        #              "/home/shan/Developments/Projects/research-devs/Blog/Frontend/frontend.php"]
-        # file = "/home/shan/Developments/Projects/research-devs/Blog/User/post/post_text_image_view.php"
+        # with open("/home/shan/Developments/Projects/research-devs/python-devs/main/sourceList.txt",
+        #           "r") as source_files:
+        #     file_list = source_files.read().splitlines()
+        #     source_files.close()
 
         # --list of file that are referenced as includes
         includes_list = open(
-            "/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/includeFileList.txt", "a")
+            "/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files/includeFileList.txt",
+            "a")
         # --list of file that are referenced as required and require_once
-        required_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/requiredFileList"
-                             ".txt", "a")
-        i = 0
-        j = 0
+        required_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files"
+                             "/requiredFileList.txt", "a")
+        all_included_files = []
+        all_required_files = []
         for file in file_list:
             with open(file, "r") as source_file:
                 source_code = source_file.read().replace("\n", " ")
                 source_dir_path = os.path.dirname(file)
-            php_occurrences = self.php_detector(self, source_code)
-            complete_includes = self.include_detector(self, php_occurrences, source_dir_path, True)
-            complete_requires = self.require_detector(self, php_occurrences, source_dir_path)
+            php_occurrences = self.php_detector(source_code)
+            complete_includes = self.include_detector(php_occurrences, source_dir_path, True)
+            complete_requires = self.require_detector(php_occurrences, source_dir_path, True)
 
             if complete_includes.__len__() != 0:
-                i = i + 1
-                # includes_list.write(str(i) + ". " + file + "\n")
                 for include in complete_includes:
                     if os.path.exists(include):
-                        includes_list.write(include + "\n")
+                        if not any(include in include_file for include_file in avoided_files):
+                            if not any(include in include_file for include_file in all_included_files):
+                                all_included_files.append(include)
 
             if complete_requires.__len__() != 0:
-                j = j + 1
-                # required_list.write(str(j) + ". " + file + "\n")
                 for requires in complete_requires:
                     if os.path.exists(requires):
-                        required_list.write(requires + "\n")
+                        if not any(requires in require_file for require_file in avoided_files):
+                            if not any(requires in require_file for require_file in all_required_files):
+                                all_required_files.append(requires)
+
+        for i in all_included_files:
+            includes_list.write(i + "\n")
+        for r in all_required_files:
+            required_list.write(r + "\n")
         includes_list.close()
         required_list.close()
 
@@ -76,7 +78,7 @@ class ReferenceFinder:
             require_once = re.findall('require_once \'(.*?)\';', occurrence)
             if need_compl_path:
                 if require_once.__len__() != 0:
-                    complete_requires.append(self.path_completer(self, require_once, source_dir_path))
+                    complete_requires.append(self.path_completer(require_once, source_dir_path))
             else:
                 for r in require_once:
                     complete_requires.append(r)
@@ -84,7 +86,7 @@ class ReferenceFinder:
             requires = re.findall("require \'(.*?)\';", occurrence)
             if need_compl_path:
                 if requires.__len__() != 0:
-                    complete_requires.append(self.path_completer(self, requires, source_dir_path))
+                    complete_requires.append(self.path_completer(requires, source_dir_path))
             else:
                 for r in requires:
                     complete_requires.append(r)
