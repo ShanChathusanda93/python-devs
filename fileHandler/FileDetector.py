@@ -23,7 +23,7 @@ class FileDetector:
 
     # --in order get the service from this function, the table name that contains the users must be known
     # --this function will detect the files which are connected with the login
-    def detect_access_files(self, file_list, user_table_name):
+    def detect_access_files(self, file_list, user_tables):
         access_files = []
         for file in file_list:
             with open(file, "r") as source_file:
@@ -40,37 +40,38 @@ class FileDetector:
 
             # --these conditions will select the files which are connected to the table that contains the user data
             # --without duplicates
-            if re.findall("select(.*?)" + user_table_name, source.lower()).__len__() > 0:
-                if not any(file in a_file for a_file in access_files):
-                    access_files.append(file)
-                connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                for c_file in connected_files:
-                    if not any(c_file in a_file for a_file in access_files):
-                        access_files.append(c_file)
+            for user_table in user_tables:
+                if re.findall("select(.*?)" + user_table, source.lower()).__len__() > 0:
+                    if not any(file in a_file for a_file in access_files):
+                        access_files.append(file)
+                    connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
+                    for c_file in connected_files:
+                        if not any(c_file in a_file for a_file in access_files):
+                            access_files.append(c_file)
 
-            if re.findall("insert(.*?)" + user_table_name, source.lower()).__len__() > 0:
-                if not any(file in a_file for a_file in access_files):
-                    access_files.append(file)
-                connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                for c_file in connected_files:
-                    if not any(c_file in a_file for a_file in access_files):
-                        access_files.append(c_file)
+                if re.findall("insert(.*?)" + user_table, source.lower()).__len__() > 0:
+                    if not any(file in a_file for a_file in access_files):
+                        access_files.append(file)
+                    connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
+                    for c_file in connected_files:
+                        if not any(c_file in a_file for a_file in access_files):
+                            access_files.append(c_file)
 
-            if re.findall("update(.*?)" + user_table_name, source.lower()).__len__() > 0:
-                if not any(file in a_file for a_file in access_files):
-                    access_files.append(file)
-                connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                for c_file in connected_files:
-                    if not any(c_file in a_file for a_file in access_files):
-                        access_files.append(c_file)
+                if re.findall("update(.*?)" + user_table, source.lower()).__len__() > 0:
+                    if not any(file in a_file for a_file in access_files):
+                        access_files.append(file)
+                    connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
+                    for c_file in connected_files:
+                        if not any(c_file in a_file for a_file in access_files):
+                            access_files.append(c_file)
 
-            if re.findall("delete(.*?)" + user_table_name, source.lower()).__len__() > 0:
-                if not any(file in a_file for a_file in access_files):
-                    access_files.append(file)
-                connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
-                for c_file in connected_files:
-                    if not any(c_file in a_file for a_file in access_files):
-                        access_files.append(c_file)
+                if re.findall("delete(.*?)" + user_table, source.lower()).__len__() > 0:
+                    if not any(file in a_file for a_file in access_files):
+                        access_files.append(file)
+                    connected_files = self.detect_connected_files(file_list, self.get_file_name(file))
+                    for c_file in connected_files:
+                        if not any(c_file in a_file for a_file in access_files):
+                            access_files.append(c_file)
 
             # --this condition can detect the files which contains the input type as password without duplicates
             if re.findall("<input(.*?)password", source.lower()).__len__() > 0:
