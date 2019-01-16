@@ -4,24 +4,21 @@ import re
 
 
 class ReferenceFinder:
-    # --base path of the source files
-    baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
+    # --path of the source web application directory
+    baseSourcePath = ""
 
     # --main method that detect the includes, required and require_once files
-    def references_detector(self, file_list, avoided_files):
-        # --open extracted source file path list
-        # with open("/home/shan/Developments/Projects/research-devs/python-devs/main/sourceList.txt",
-        #           "r") as source_files:
-        #     file_list = source_files.read().splitlines()
-        #     source_files.close()
-
-        # --list of file that are referenced as includes
+    def references_detector(self, file_list, avoided_files, base_code_path):
+        # --setting a value to a global variable
+        global baseSourcePath
+        baseSourcePath = base_code_path
+        # --list of files that are referenced as includes
         includes_list = open(
             "/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files/includeFileList.txt",
             "a")
-        # --list of file that are referenced as required and require_once
-        required_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files"
-                             "/requiredFileList.txt", "a")
+        # --list of files that are referenced as required and require_once
+        # required_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files"
+        #                      "/requiredFileList.txt", "a")
         all_included_files = []
         all_required_files = []
         for file in file_list:
@@ -49,9 +46,9 @@ class ReferenceFinder:
         for i in all_included_files:
             includes_list.write(i + "\n")
         for r in all_required_files:
-            required_list.write(r + "\n")
+            includes_list.write(r + "\n")
         includes_list.close()
-        required_list.close()
+        # required_list.close()
 
     # --detect php code snippets from the provided source code and returns the php occurrences
     def php_detector(self, source_code):

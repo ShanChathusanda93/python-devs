@@ -8,7 +8,6 @@ class FileDetector:
     # --root is the path of the source files and the anchor_str is the corresponding substring to be found in the file
     # --names
     def detect_files(self, root):
-        # sourceList = open("sourceList.txt", "w")
         file_paths = []
         for paths, sub_dirs, files in os.walk(root):
             for file_path in files:
@@ -17,9 +16,7 @@ class FileDetector:
                 if file_name[1] == ".php" or file_name[1] == ".html":
                     full_path = os.path.join(paths, file_path)
                     file_paths.append(full_path)
-                    # sourceList.write(full_path + "\n")
         return file_paths
-        # sourceList.close()
 
     # --in order get the service from this function, the table name that contains the users must be known
     # --this function will detect the files which are connected with the login
