@@ -65,7 +65,8 @@ class ReferenceFinder:
                     complete_includes.append(self.path_completer(includes, source_dir_path))
             else:
                 if includes.__len__() != 0:
-                    complete_includes.append(includes)
+                    for incl in includes:
+                        complete_includes.append(incl)
         return complete_includes
 
     # --detect require_once and require files from the provided php occurrences and returns the file path list

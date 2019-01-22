@@ -2,6 +2,7 @@ import re
 
 from utils.Stack import Stack
 
+
 # --this class contains the methods to detect the extended while and for loops in the source code
 # --need further implementations
 class LoopDetector:
