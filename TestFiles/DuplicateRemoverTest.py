@@ -10,19 +10,19 @@ import re
 # for sec in second_list:
 #     print(sec)
 #
-with open("/opt/lampp/htdocs/Blog/post views/view_post_image_phpcode.php", "r") as source_file:
-    code = source_file.read()
-source = code.replace("\n", " ")
-extended_ends = re.findall("endwhile;", source)
-search = re.search("while \(", source)
-# for s in search:
-print(search)
+# with open("/opt/lampp/htdocs/Blog/post views/view_post_image_phpcode.php", "r") as source_file:
+#     code = source_file.read()
+# source = code.replace("\n", " ")
+# extended_ends = re.findall("endwhile;", source)
+# search = re.search("while \(", source)
+# # for s in search:
+# print(search)
 # i = extended_ends.__len__()
 # for end in extended_ends:
 #     source = source.replace("endwhile;", i.__str__(), 1)
 #     i = i - 1
 
-print(source)
+# print(source)
 
 # string = "I am a student as well as a teacher"
 # occurrences = re.findall("as", string)
@@ -39,3 +39,22 @@ print(source)
 # print(s)
 # s = s.replace("as", "yyy", 1)
 # print(s)
+
+
+# --include detection
+# import re
+#
+# string = "include '../Template/Bootstrap/bootstrap.php';"
+# included_file = "bootstrap.php"
+# reg = r"include(.*?)" + re.escape(included_file) + r"(\"|\');"
+# # file = re.findall(r"include(.*?)%s(\"|\');" % included_file, string)
+# file = re.findall(reg, string)
+# print(file[0])
+
+# --string split
+string = "<?php include '../Template/Bootstrap/bootstrap.php'; ?>"
+words = string.split()
+words.remove("include")
+# words.remove("'../Template/Bootstrap/bootstrap.php';")
+for word in words:
+    print(word)
