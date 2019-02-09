@@ -3,6 +3,7 @@ import re
 from stringFinder.ReferenceFinder import ReferenceFinder
 
 
+# --need to consider whether to create a module or an article from the php code
 def conversion_format_detector(file_name_list):
     file_details = []
     for file_name in file_name_list:
@@ -10,7 +11,6 @@ def conversion_format_detector(file_name_list):
             source = altered_source.read()
             source = source.replace("\n", " ")
 
-        # php_occurrences = php_detector_1(source)
         ref = ReferenceFinder()
         php_occurrences = ref.php_detector(source)
 

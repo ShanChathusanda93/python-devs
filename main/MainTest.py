@@ -44,23 +44,29 @@
 # print(cmnts.group(0))
 
 from stringFinder.DuplicateFileDetector import duplicate_detector
-from stringFinder.ReferenceFinder import ReferenceFinder
+# from stringFinder.ReferenceFinder import ReferenceFinder
+#
+# # duplicate_detector()
+# ref_find = ReferenceFinder
+# file = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/non_redundant_includes.txt", "r")
+# files = file.read().splitlines()
+# values = ref_find.has_include(ref_find, files)
+#
+# for index, file_list in enumerate(values):
+#     if index == 0:
+#         print("no_includes_files")
+#         for f in file_list:
+#             print(f)
+#         print(file_list.__len__())
+#     elif index == 1:
+#         print("has_includes_files")
+#         for f in file_list:
+#             print(f)
+#         print(file_list.__len__())
+#     print("\n")
 
-# duplicate_detector()
-ref_find = ReferenceFinder
-file = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/non_redundant_includes.txt", "r")
-files = file.read().splitlines()
-values = ref_find.has_include(ref_find, files)
+# --test loop detector
+from stringFinder.LoopDetector import LoopDetector
 
-for index, file_list in enumerate(values):
-    if index == 0:
-        print("no_includes_files")
-        for f in file_list:
-            print(f)
-        print(file_list.__len__())
-    elif index == 1:
-        print("has_includes_files")
-        for f in file_list:
-            print(f)
-        print(file_list.__len__())
-    print("\n")
+loop_detector = LoopDetector()
+loop_detector.detect_extended_while_loops(source=" ", file_name="view_post_image_phpcode")

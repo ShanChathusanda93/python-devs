@@ -12,10 +12,12 @@ class ReferenceFinder:
         # --setting a value to a global variable
         global baseSourcePath
         baseSourcePath = base_code_path
+
         # --list of files that are referenced as includes
         includes_list = open(
             "/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files/includeFileList.txt",
             "a")
+
         # --list of files that are referenced as required and require_once
         # required_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files"
         #                      "/requiredFileList.txt", "a")

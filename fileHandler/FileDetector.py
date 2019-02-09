@@ -1,6 +1,7 @@
 # --the code at this file will detect files which contains a corresponding substring at the file name
 import os
 import re
+from fileHandler.NavigationDO import NavigationDO
 
 
 class FileDetector:
@@ -80,6 +81,39 @@ class FileDetector:
                 if not any(file in a_file for a_file in access_files):
                     access_files.append(file)
         return access_files
+
+    def get_database_connect_file_name(self, file_list):
+        connection_file = []
+        for file in file_list:
+            with open(file, "r") as source_file:
+                orig = source_file.read()
+            source = orig.replace("\n", " ")
+            # --this condition will detect the database connection file without duplicates
+            if re.findall("mysqli_connect\(", source.lower()).__len__() > 0:
+                connection_file.append(file)
+            elif re.findall("mysql_connect\(", source.lower()).__len__() > 0:
+                connection_file.append(file)
+        return connection_file
+
+    def get_content_files(self, file_list, access_file_list):
+        content_files = []
+        for file in file_list:
+            if not any(file in files for files in access_file_list):
+                content_files.append(file)
+        return content_files
+
+    def get_navigation_files_details(self, file_list):
+        navigation_files_details = []
+        for file in file_list:
+            with open(file, "r") as source_file:
+                original_src = source_file.read().replace("\n", " ")
+            ul_lists = re.findall("<ul(.*?)<\/ul>", original_src.lower())
+            if ul_lists.__len__() > 0:
+                for ul_list in ul_lists:
+                    navigations = re.findall("<li>(.*?)</li>", ul_list)
+                    if navigations.__len__() > 0:
+                        navigation_files_details.append(NavigationDO(file, navigations))
+        return navigation_files_details
 
     def get_file_name(self, file):
         base = os.path.basename(file)
