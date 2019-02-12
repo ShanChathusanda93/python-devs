@@ -1,5 +1,6 @@
 import os
 
+
 # print("Hello World from python...!!!")
 #
 # for i in range(1, 10):
@@ -19,4 +20,13 @@ def detect_files():
                 # print(full_path)
     return file_paths
 
+
+def get_hello_with_name(name_str):
+    hello = "Hello Mr. " + name_str
+    return hello
+    # print(hello)
+
+
+def square(value):
+    return value * value
 # detect_files("/home/shan/Developments/Projects/research-devs/Blog")
