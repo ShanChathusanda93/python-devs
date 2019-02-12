@@ -107,12 +107,16 @@ class FileDetector:
         for file in file_list:
             with open(file, "r") as source_file:
                 original_src = source_file.read().replace("\n", " ")
-            ul_lists = re.findall("<ul(.*?)<\/ul>", original_src.lower())
+                original_src = original_src.replace("\t", " ")
+            ul_lists = re.findall("<ul(.*?)<\/ul>", original_src)
             if ul_lists.__len__() > 0:
+                navigations = []
                 for ul_list in ul_lists:
-                    navigations = re.findall("<li>(.*?)</li>", ul_list)
-                    if navigations.__len__() > 0:
-                        navigation_files_details.append(NavigationDO(file, navigations))
+                    navigators = re.findall("<li>(.*?)</li>", ul_list)
+                    for nav in navigators:
+                        navigations.append(nav)
+                if navigations.__len__() > 0:
+                    navigation_files_details.append(NavigationDO(file, navigations))
         return navigation_files_details
 
     def get_file_name(self, file):

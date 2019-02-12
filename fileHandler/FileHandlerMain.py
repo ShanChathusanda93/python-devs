@@ -34,11 +34,17 @@
 
 
 from fileHandler.FileDetector import FileDetector
+from stringFinder.NavigationLinksDetector import NavigationLinksDetector
 
 file_detector = FileDetector()
+navigation_detector = NavigationLinksDetector()
 file_list = file_detector.detect_files("/opt/lampp/htdocs/Blog")
 nav_files = file_detector.get_navigation_files_details(file_list)
-for nav in nav_files:
-    print(nav.nav_file_name)
-    for navigate in nav.navigations:
-        print(navigate)
+# for nav in nav_files:
+#     print(nav.nav_file_name)
+#     for navigate in nav.navigations:
+#         print(navigate)
+navigation_links = navigation_detector.get_navigation_links(nav_files, "/opt/lampp/htdocs/Blog")
+
+
+
