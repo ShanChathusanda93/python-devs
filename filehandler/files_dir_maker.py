@@ -1,5 +1,6 @@
 import os
 import datetime
+import re
 
 from bs4 import BeautifulSoup
 
@@ -77,63 +78,63 @@ class FilesDirectoryMaker:
                 helper_file.write(source_code)
 
     def create_main_module_file(self, source_file_path):
-        # reference_finder = ReferenceFinder()
-        # source_replacer = SourceReplacer()
-        # component_register = ComponentRegistry()
-        # base_name = os.path.basename(source_file_path)
-        # file_name_details = os.path.splitext(base_name)
-        # target_dir_path = "/opt/lampp/htdocs/JoomlaResearchTest/modules/mod_" + file_name_details[0].lower()
-        # main_module_file_path = target_dir_path + "/mod_" + base_name.lower()
-        # with open(source_file_path, "r") as source_file:
-        #     source_code = source_file.read().replace("\n", " ")
-        # php_occurrences = reference_finder.get_php_occurrences(source_code)
-        # complete_includes = []
-        # complete_includes.extend(reference_finder.get_included_php_file_paths(php_occurrences,
-        #                                                                       DetailsKeeperDO.get_source_dir_path(
-        #                                                                           DetailsKeeperDO),
-        #                                                                       need_compl_path=True))
-        # includes = []
-        # includes.extend(reference_finder.get_included_php_file_paths(php_occurrences,
-        #                                                              DetailsKeeperDO.get_source_dir_path(
-        #                                                                  DetailsKeeperDO), need_compl_path=False))
-        # complete_requires = []
-        # complete_requires.extend(reference_finder.get_required_php_file_paths(php_occurrences,
-        #                                                                       DetailsKeeperDO.get_source_dir_path(
-        #                                                                           DetailsKeeperDO),
-        #                                                                       need_compl_path=True))
-        # requires = []
-        # requires.extend(reference_finder.get_required_php_file_paths(php_occurrences,
-        #                                                              DetailsKeeperDO.get_source_dir_path(
-        #                                                                  DetailsKeeperDO), need_compl_path=False))
-        #
-        # if complete_includes.__len__() > 0:
-        #     for incl_file in complete_includes:
-        #         incl_tree(incl_file, target_dir_path)
-        #     source_code = source_replacer.replace_includes(source_code, includes)
-        # source_code = source_replacer.replace_session_management(source_code)
-        # source_code = source_replacer.replace_media_references(source_code, source_file_path,
-        #                                                        DetailsKeeperDO.get_source_dir_path(DetailsKeeperDO))
-        # main_module_file_header = "<?php\n" \
-        #                           "/***\n" \
-        #                           "*@package Joomla.Site\n" \
-        #                           "*@subpackage mod_" + file_name_details[0] + "\n" \
-        #                           "*@license GNU/GPL, see LICENSE.php\n" \
-        #                           "@copyright Copyright (C) 2005 - 2018, Open Source Matters, Inc. All rights " \
-        #                           "reserved.\n" \
-        #                           "***/\n" \
-        #                           "// no direct access\n" \
-        #                           "defined('_JEXEC') or die;" \
-        #                           "?>"
-        # source_code = main_module_file_header + source_code
-        # source_code = BeautifulSoup(source_code, "html.parser")
-        # with open(main_module_file_path, "w+") as module_file:
-        #     module_file.write(source_code.prettify())
-        # self.create_target_directory(target_dir_path + "/language")
-        # self.create_target_directory(target_dir_path + "/language/en-GB")
-        # self.create_target_directory(target_dir_path + "/tmpl")
-        # self.create_module_xml_file(target_dir_path)
-        # title = component_register.register_module("mod_" + file_name_details[0].replace(" ", "_").lower())
-        return "module title " + source_file_path
+        reference_finder = ReferenceFinder()
+        source_replacer = SourceReplacer()
+        component_register = ComponentRegistry()
+        base_name = os.path.basename(source_file_path)
+        file_name_details = os.path.splitext(base_name)
+        target_dir_path = "/opt/lampp/htdocs/JoomlaResearchTest/modules/mod_" + file_name_details[0].lower()
+        main_module_file_path = target_dir_path + "/mod_" + base_name.lower()
+        with open(source_file_path, "r") as source_file:
+            source_code = source_file.read().replace("\n", " ")
+        php_occurrences = reference_finder.get_php_occurrences(source_code)
+        complete_includes = []
+        complete_includes.extend(reference_finder.get_included_php_file_paths(php_occurrences,
+                                                                              DetailsKeeperDO.get_source_dir_path(
+                                                                                  DetailsKeeperDO),
+                                                                              need_compl_path=True))
+        includes = []
+        includes.extend(reference_finder.get_included_php_file_paths(php_occurrences,
+                                                                     DetailsKeeperDO.get_source_dir_path(
+                                                                         DetailsKeeperDO), need_compl_path=False))
+        complete_requires = []
+        complete_requires.extend(reference_finder.get_required_php_file_paths(php_occurrences,
+                                                                              DetailsKeeperDO.get_source_dir_path(
+                                                                                  DetailsKeeperDO),
+                                                                              need_compl_path=True))
+        requires = []
+        requires.extend(reference_finder.get_required_php_file_paths(php_occurrences,
+                                                                     DetailsKeeperDO.get_source_dir_path(
+                                                                         DetailsKeeperDO), need_compl_path=False))
+
+        if complete_includes.__len__() > 0:
+            for incl_file in complete_includes:
+                incl_tree(incl_file, target_dir_path)
+            source_code = source_replacer.replace_includes(source_code, includes)
+        source_code = source_replacer.replace_session_management(source_code)
+        source_code = source_replacer.replace_media_references(source_code, source_file_path,
+                                                               DetailsKeeperDO.get_source_dir_path(DetailsKeeperDO))
+        main_module_file_header = "<?php\n" \
+                                  "/***\n" \
+                                  "*@package Joomla.Site\n" \
+                                  "*@subpackage mod_" + file_name_details[0] + "\n" \
+                                  "*@license GNU/GPL, see LICENSE.php\n" \
+                                  "@copyright Copyright (C) 2005 - 2018, Open Source Matters, Inc. All rights " \
+                                  "reserved.\n" \
+                                  "***/\n" \
+                                  "// no direct access\n" \
+                                  "defined('_JEXEC') or die;" \
+                                  "?>"
+        source_code = main_module_file_header + source_code
+        source_code = BeautifulSoup(source_code, "html.parser")
+        with open(main_module_file_path, "w+") as module_file:
+            module_file.write(source_code.prettify())
+        self.create_target_directory(target_dir_path + "/language")
+        self.create_target_directory(target_dir_path + "/language/en-GB")
+        self.create_target_directory(target_dir_path + "/tmpl")
+        self.create_module_xml_file(target_dir_path)
+        title = component_register.register_module("mod_" + file_name_details[0].replace(" ", "_").lower())
+        return title
 
     def create_module_xml_file(self, target_dir_path):
         module_file = ""
@@ -155,7 +156,7 @@ class FilesDirectoryMaker:
                             "<author>Joomla! Research Project</author>\n" \
                             "<creationDate>" + date_string + "</creationDate>\n" \
                             "<copyright>Copyright (C) 2005 - 2018 Open Source Matters. All rights " \
-                                                             "reserved.</copyright>\n" \
+                            "reserved.</copyright>\n" \
                             "<license>GNU General Public License version 2 or later; see LICENSE.txt</license>\n" \
                             "<authorEmail>authoremail@gmail.com</authorEmail>\n" \
                             "<authorUrl>www.authorurl.com</authorUrl>\n" \
@@ -183,7 +184,32 @@ class FilesDirectoryMaker:
         with open(target_file_path, "w+") as module_xml_file:
             module_xml_file.write(target_xml_string.prettify())
 
+    def replace_main_file_includes(self, source_code):
+        reference_finder = ReferenceFinder()
+        php_occurrences = reference_finder.get_php_occurrences(source_code)
+        complete_includes = reference_finder.get_included_php_file_paths(php_occurrences,
+                                                                         DetailsKeeperDO.get_source_dir_path(
+                                                                             DetailsKeeperDO), True)
+        includes = reference_finder.get_included_php_file_paths(php_occurrences, DetailsKeeperDO.get_source_dir_path(
+            DetailsKeeperDO), False)
+        i = 0
+        for complete_include in complete_includes:
+            module_title = self.create_main_module_file(complete_include)
+            replace_string = "?> {module " + module_title + "} <?php"
+            source_code = re.sub(r"include(\s*)(\"|\')" + re.escape(includes[i]) + r"(\"|\')(\s*);",
+                                 replace_string, source_code)
+        return source_code
+
 
 file_maker = FilesDirectoryMaker()
+# DetailsKeeperDO.set_source_dir_path(DetailsKeeperDO, "/opt/lampp/htdocs/Blog")
+# file_maker.create_main_module_file("/opt/lampp/htdocs/Blog/TreeTest/a.php")
+
+with open("/opt/lampp/htdocs/Blog/Login System/login_phpcode.php", "r") as file:
+    source = file.read().replace("\n", " ")
 DetailsKeeperDO.set_source_dir_path(DetailsKeeperDO, "/opt/lampp/htdocs/Blog")
-file_maker.create_main_module_file("/opt/lampp/htdocs/Blog/TreeTest/a.php")
+source = source.replace("require_once", "include")
+source = source.replace("require", "include")
+source = file_maker.replace_main_file_includes(source)
+print(source)
+

@@ -1,10 +1,8 @@
 import os
 import re
 
-from dataobjects.detail_keeper_do import DetailsKeeperDO
 from filehandler.file_migrator import FileMigrator
 from stringfinder.reference_finder import ReferenceFinder
-from filehandler.files_dir_maker import FilesDirectoryMaker
 
 
 class SourceReplacer:
@@ -30,6 +28,7 @@ class SourceReplacer:
     #                 for occur in php_occurrences:
     #                     if included_file in occur:
     #                         source = source.replace(occur, "include 'file_path_to/" + included_file + "';")
+
     def replace_media_references(self, source_code, source_file_path, main_source_dir_path):
         # this path should be an user input
         target_media_dir_path = "/opt/lampp/htdocs/JoomlaResearchTest/images/"
@@ -116,29 +115,3 @@ class SourceReplacer:
         #           ) as file:
         #     file.write(source_code.prettify())
         return source_code
-
-    def replace_main_file_includes(self, source_code):
-        reference_finder = ReferenceFinder()
-        file_maker = FilesDirectoryMaker()
-        php_occurrences = reference_finder.get_php_occurrences(source_code)
-        complete_includes = reference_finder.get_included_php_file_paths(php_occurrences,
-                                                                         DetailsKeeperDO.get_source_dir_path(
-                                                                             DetailsKeeperDO), True)
-        includes = reference_finder.get_included_php_file_paths(php_occurrences, DetailsKeeperDO.get_source_dir_path(
-            DetailsKeeperDO), False)
-        i = 0
-        for complete_include in complete_includes:
-            module_title = file_maker.create_main_module_file(complete_include)
-            replace_string = "?> {module" + module_title + "} <?php"
-            source_code = re.sub(r"include(\s*)(\"|\')" + re.escape(includes[i]) + r"(\"|\')(\s*);",
-                                 replace_string, source_code)
-        return source_code
-
-
-source_rep = SourceReplacer()
-with open("/opt/lampp/htdocs/Blog/Login System/login_phpcode.php", "r") as file:
-    source = file.read().replace("\n", " ")
-source = source.replace("require", "include")
-source = source.replace("require_once", "include")
-source = source_rep.replace_main_file_includes(source)
-print(source)
