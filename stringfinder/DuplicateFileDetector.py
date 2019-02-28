@@ -4,16 +4,16 @@ from collections import OrderedDict
 
 def duplicate_detector():
     # --remove the duplicate files from the extracted include file path list
-    with open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/includeFileList.txt",
+    with open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder/includeFileList.txt",
               "r") as file:
         include_file_list = file.read()
         file_list = "\n".join(list(OrderedDict.fromkeys(include_file_list.split("\n"))))
-        cleaned_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder"
+        cleaned_list = open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder"
                             "/non_redundant_includes.txt", "w+")
         cleaned_list.write(file_list)
 
     # --remove the duplicate files fromm the extracted require files
-    with open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/requiredFileList.txt",
+    with open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder/requiredFileList.txt",
               "r") as file:
         required_file_list = file.read()
         file_list = "\n".join(list(OrderedDict.fromkeys(required_file_list.split("\n"))))

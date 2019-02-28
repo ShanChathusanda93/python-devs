@@ -1,7 +1,7 @@
 import re
 
 from utils.Stack import Stack
-from fileHandler.DirMaker import DirectoryMaker
+from filehandler.files_dir_maker import FilesDirectoryMaker
 
 
 # --this class contains the methods to detect the extended while and for loops in the source code
@@ -11,8 +11,8 @@ class LoopDetector:
     def detect_extended_while_loops(self, source, file_name):
         indices = []
         while_stack = Stack()
-        dir_maker = DirectoryMaker()
-        target_php_base = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets"
+        dir_maker = FilesDirectoryMaker()
+        target_php_base = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler/phpSnippets"
 
         # --below commented code is to demonstrate the program from a single file
         # with open("/opt/lampp/htdocs/Blog/post views/view_post_image_phpcode.php", "r") as source_file:
@@ -42,7 +42,7 @@ class LoopDetector:
                         while_file = source[while_start:idx]
                         edited_while_file = while_file.replace(">", ">\n")
                         dir_path = target_php_base + "/" + file_name
-                        dir_maker.make_directory(dir_path)
+                        dir_maker.create_target_directory(dir_path)
                         while_file_path = dir_path + "/while_loop_" + i.__str__() + ".php"
                         with open(while_file_path, "w") as file:
                             file.write("<?php\n" + edited_while_file + "\n?>")

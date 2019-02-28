@@ -54,7 +54,4 @@ def square(value):
     return value * value
 
 
-files = detect_files()
-for file in files:
-    print(file)
-print(files.__len__())
+# get_source_file_paths()

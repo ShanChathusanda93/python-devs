@@ -1,18 +1,18 @@
 import os
 
 from codeparser.CodeFormatter import format_code
-from fileHandler.ConnectionCreator import ConnectionCreator
-from fileHandler.DirMaker import DirectoryMaker
-from fileHandler.FileDetector import FileDetector
-from fileHandler.FileParser import conversion_format_detector
-from stringFinder.HeaderRemover import remove_html_header
-from stringFinder.LoopDetector import LoopDetector
-from stringFinder.ReferenceFinder import ReferenceFinder
+from filehandler.connection_creator import ConnectionCreator
+from filehandler.files_dir_maker import FilesDirectoryMaker
+from filehandler.file_detector import FileDetector
+from filehandler.FileParser import conversion_format_detector
+from stringfinder.HeaderRemover import remove_html_header
+from stringfinder.LoopDetector import LoopDetector
+from stringfinder.reference_finder import ReferenceFinder
 
 file_detector = FileDetector()
 reference_finder = ReferenceFinder()
 loop_detector = LoopDetector()
-dir_maker = DirectoryMaker()
+dir_maker = FilesDirectoryMaker()
 con_creator = ConnectionCreator()
 
 # --base path of the source files (user inputs)
@@ -20,11 +20,11 @@ baseSourcePath = "/home/shan/Developments/Projects/research-devs/Blog"
 # --tables which contains the user details (user inputs)
 user_tables = ["user_login", "userimage"]
 
-# --calling to the function detect_files to get all the files in the base source path
-file_list = file_detector.detect_files(baseSourcePath)
+# --calling to the function get_source_file_paths to get all the files in the base source path
+file_list = file_detector.get_source_file_paths(baseSourcePath)
 
 # --detect the access files like login, signup and database connections
-access_file_list = file_detector.detect_access_files(file_list, user_tables)
+access_file_list = file_detector.get_user_management_file_paths(file_list, user_tables)
 database_connect_file_path = file_detector.get_database_connect_file_name(file_list)
 database_connect_file = " "
 if database_connect_file_path.__len__() == 1:
@@ -50,7 +50,7 @@ content_files = file_detector.get_content_files(file_list, access_file_list)
 
 reference_finder.references_detector(content_files, access_file_list, baseSourcePath)
 
-with open("/home/shan/Developments/Projects/research-devs/python-devs/stringFinder/created_files/includeFileList.txt",
+with open("/home/shan/Developments/Projects/research-devs/python-devs/stringfinder/created_files/includeFileList.txt",
           "r") as incl_files:
     included_files = incl_files.read().splitlines()
 
@@ -72,7 +72,7 @@ for separate_file in separate_files:
     if os.path.exists(separate_files):
         with open(separate_file, "r") as sep_file:
             sep_source = sep_file.read().replace("\n", " ")
-        included_files = reference_finder.include_detector(sep_source, source_dir_path="", need_compl_path=False)
+        included_files = reference_finder.get_included_php_file_paths(sep_source, source_dir_path="", need_compl_path=False)
         if included_files.__len__() > 0:
             for included_file in included_files:
                 print(included_file)
@@ -86,12 +86,12 @@ for article_file in article_files:
         tempBasePath = os.path.basename(article_file)
         art_file_name = os.path.splitext(tempBasePath)[0].replace(' ', '_')
 
-        php_occurrences = reference_finder.php_detector(art_source)
-        included_files = reference_finder.include_detector(php_occurrences, source_dir_path=" ", need_compl_path=False)
+        php_occurrences = reference_finder.get_php_occurrences(art_source)
+        included_files = reference_finder.get_included_php_file_paths(php_occurrences, source_dir_path=" ", need_compl_path=False)
         if included_files.__len__() > 0:
             for included_file in included_files:
                 if database_connect_file in included_file:
-                    db_connection = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler" \
+                    db_connection = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler" \
                                     "/phpSnippets/dbconnection/connection.php"
                     art_source = art_source.replace(included_file, db_connection)
                 else:
@@ -111,11 +111,11 @@ for article_file in article_files:
                             if included_file in occur:
                                 art_source = art_source.replace(occur, "include 'file_path_to/" + included_file + "';")
 
-        required_files = reference_finder.require_detector(php_occurrences, source_dir_path=" ", need_compl_path=False)
+        required_files = reference_finder.get_required_php_file_paths(php_occurrences, source_dir_path=" ", need_compl_path=False)
         if required_files.__len__() > 0:
             for required_file in required_files:
                 if database_connect_file in required_file:
-                    db_connection = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler" \
+                    db_connection = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler" \
                                     "/phpSnippets/dbconnection/connection.php"
                     art_source = art_source.replace(required_file, db_connection)
                 else:
@@ -138,15 +138,15 @@ for article_file in article_files:
                                 art_source = art_source.replace(occur, "include 'file_path_to/required_file.php';")
 
         art_source = loop_detector.detect_extended_while_loops(art_source, art_file_name)
-        php_occurrences = reference_finder.php_detector(art_source)
+        php_occurrences = reference_finder.get_php_occurrences(art_source)
         i = 0
         for occur in php_occurrences:
             words = str(occur).split()
             if words.__len__() > 2:
                 i = i + 1
-                target_dir_path = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets" \
+                target_dir_path = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler/phpSnippets" \
                                   + "/" + art_file_name
-                dir_maker.make_directory(target_dir_path)
+                dir_maker.create_target_directory(target_dir_path)
                 target_file_path = target_dir_path + "/" + art_file_name + "_php_partition_" + i.__str__() + ".php"
                 with open(target_file_path, "w") as file:
                     file.write("<?php \n" + occur + " \n?>")

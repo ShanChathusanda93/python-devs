@@ -1,6 +1,6 @@
 import re
 
-from stringFinder.ReferenceFinder import ReferenceFinder
+from stringfinder.reference_finder import ReferenceFinder
 
 
 # --need to consider whether to create a module or an article from the php code
@@ -12,7 +12,7 @@ def conversion_format_detector(file_name_list):
             source = source.replace("\n", " ")
 
         ref = ReferenceFinder()
-        php_occurrences = ref.php_detector(source)
+        php_occurrences = ref.get_php_occurrences(source)
 
         # --if there is a html header, get the count of the header part of the file
         if re.findall('<!DOCTYPE html>', source).__len__() > 0:

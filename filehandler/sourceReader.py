@@ -1,6 +1,6 @@
 import os
 
-from stringFinder.ReferenceFinder import ReferenceFinder
+from stringfinder.reference_finder import ReferenceFinder
 
 # --filePaths in windows
 # filePath = "C:\\xampp\\htdocs\\Blog\\Frontend\\frontend.php"
@@ -26,25 +26,25 @@ try:
     access_rights = 0o755
 
     # --creating target directory for all php files
-    targetPhpDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets"
+    targetPhpDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler/phpSnippets"
     if not os.path.exists(targetPhpDirPath):
         os.mkdir(targetPhpDirPath, access_rights)
 
     # --creating the target directory for the altered source code
-    targetAlteredSrcDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/alteredSrc"
+    targetAlteredSrcDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler/alteredSrc"
     if not os.path.exists(targetAlteredSrcDirPath):
         os.mkdir(targetAlteredSrcDirPath, access_rights)
 
     # --path for each source files php snippets
-    targetFileDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/fileHandler/phpSnippets/" + \
+    targetFileDirPath = "/home/shan/Developments/Projects/research-devs/python-devs/filehandler/phpSnippets/" + \
                         fileNameBase
 
     # occurrences = re.findall('<\?php(.*?)\?>', text)
-    php_occurrences = ReferenceFinder.php_detector(ReferenceFinder, text)
-    included_files = ReferenceFinder.include_detector(ReferenceFinder, php_occurrences, source_dir_path="/",
-                                                      need_compl_path=False)
-    required_files = ReferenceFinder.require_detector(ReferenceFinder, php_occurrences, source_dir_path="/",
-                                                      need_compl_path=False)
+    php_occurrences = ReferenceFinder.get_php_occurrences(ReferenceFinder, text)
+    included_files = ReferenceFinder.get_included_php_file_paths(ReferenceFinder, php_occurrences,
+                                                                 need_compl_path=False)
+    required_files = ReferenceFinder.get_required_php_file_paths(ReferenceFinder, php_occurrences,
+                                                                 need_compl_path=False)
 
     if php_occurrences.__len__() > 0:
         # --creating the directory for each php source file

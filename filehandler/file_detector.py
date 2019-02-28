@@ -1,14 +1,17 @@
 # --the code at this file will detect files which contains a corresponding substring at the file name
 import os
 import re
-from fileHandler.NavigationDO import NavigationDO
+
+from dataobjects.navigation_do import NavigationDO
+from dataobjects.detail_keeper_do import DetailsKeeperDO
+from utils.Stack import Stack
 
 
 class FileDetector:
     # --method to detect the files
     # --root is the path of the source files and the anchor_str is the corresponding substring to be found in the file
     # --names
-    def detect_files(self, root):
+    def get_source_file_paths(self, root):
         file_paths = []
         for paths, sub_dirs, files in os.walk(root):
             for file_path in files:
@@ -17,11 +20,24 @@ class FileDetector:
                 if file_name[1] == ".php" or file_name[1] == ".html":
                     full_path = os.path.join(paths, file_path)
                     file_paths.append(full_path)
+        DetailsKeeperDO.source_dir_path = root
+        DetailsKeeperDO.source_file_list = file_paths
         return file_paths
+
+    def get_media_file_paths(self, root):
+        media_file_paths = []
+        for paths, sub_dirs, files in os.walk(root):
+            for file_path in files:
+                base_name = os.path.basename(file_path)
+                media_file_name = os.path.splitext(base_name)
+                if media_file_name[1] == ".jpg" or media_file_name[1] == ".png":
+                    full_media_path = os.path.join(paths, file_path)
+                    media_file_paths.append(full_media_path)
+        return media_file_paths
 
     # --in order get the service from this function, the table name that contains the users must be known
     # --this function will detect the files which are connected with the login
-    def detect_access_files(self, file_list, user_tables):
+    def get_user_management_file_paths(self, file_list, user_tables):
         access_files = []
         for file in file_list:
             with open(file, "r") as source_file:
@@ -103,20 +119,45 @@ class FileDetector:
         return content_files
 
     def get_navigation_files_details(self, file_list):
+        indices = []
+        ul_stack = Stack()
         navigation_files_details = []
         for file in file_list:
             with open(file, "r") as source_file:
                 original_src = source_file.read().replace("\n", " ")
-                original_src = original_src.replace("\t", " ")
-            ul_lists = re.findall("<ul(.*?)<\/ul>", original_src)
-            if ul_lists.__len__() > 0:
-                navigations = []
-                for ul_list in ul_lists:
-                    navigators = re.findall("<li>(.*?)</li>", ul_list)
+                original_src = original_src.replace("\t", "")
+            ul_start_indices = [w.start(0) for w in re.finditer("<ul", original_src)]
+            ul_end_indices = [e.end(0) for e in re.finditer("</ul>", original_src)]
+            for ul_s_index in ul_start_indices:
+                indices.append(ul_s_index)
+            for ul_e_index in ul_end_indices:
+                indices.append(ul_e_index)
+
+            ul_segments = []
+            if indices.__len__() > 0:
+                indices.sort(reverse=False)
+                for idx in indices:
+                    if idx in ul_start_indices:
+                        ul_stack.push(idx)
+                    elif idx in ul_end_indices:
+                        if ul_stack.size() == 1:
+                            ul_start = ul_stack.pop()
+                            ul_segments.append(original_src[ul_start:idx])
+                        else:
+                            ul_stack.pop()
+
+            # ul_lists = re.findall("<ul(.*?)<\/ul>", original_src)
+            if ul_segments.__len__() > 0:
+                navigation_details = []
+                for ul_segment in ul_segments:
+                    navigators = re.findall("<li>(.*?)</li>", ul_segment)
                     for nav in navigators:
-                        navigations.append(nav)
-                if navigations.__len__() > 0:
-                    navigation_files_details.append(NavigationDO(file, navigations))
+                        navigation_details.append(nav)
+                if navigation_details.__len__() > 0:
+                    navigator = NavigationDO()
+                    navigator.set_nav_file_name(file)
+                    navigator.set_navigations(navigation_details)
+                    navigation_files_details.append(navigator)
         return navigation_files_details
 
     def get_file_name(self, file):
@@ -138,4 +179,3 @@ class FileDetector:
     def print_list(self, list):
         for l in list:
             print(l)
-
