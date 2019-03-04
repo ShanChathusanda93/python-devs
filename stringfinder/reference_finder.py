@@ -2,6 +2,7 @@
 import os
 import re
 
+from dataobjects.detail_keeper_do import DetailsKeeperDO
 from filehandler.file_detector import FileDetector
 
 
@@ -107,8 +108,11 @@ class ReferenceFinder:
         elif "../" in file_path:
             file_path = file_path.replace('..', "")
         matching = [file for file in file_list if file_path in file]
-        for match in matching:
-            return match
+        if matching.__len__() > 0:
+            for match in matching:
+                return match
+        else:
+            return "No File"
 
     def has_include(self, file_path):
         # no_includes_files = []
@@ -163,3 +167,26 @@ class ReferenceFinder:
         ends = [n.end(0) for n in re.finditer('\$_SESSION\[(\'|\")(.*?)(\"|\')\]', source_code)]
         session_details = [details, starts, ends]
         return session_details
+
+    def get_links_details(self, source_code):
+        details = []
+        file_detector = FileDetector()
+        file_list = file_detector.get_source_file_paths("/opt/lampp/htdocs/Blog")
+        links_details = re.findall("<a(.*?)/a>", source_code)
+        for link in links_details:
+            link_details = []
+            det = re.findall(r"href(\s*)=(\s*)(\"|\')(.*?)(\'|\")(\s*)>(.*?)<", link)
+            complete_path = self.get_complete_path(det[0][3], file_list)
+            link_details.append(det[0])
+            link_details.append(complete_path)
+            link_details.append(link)
+            details.append(link_details)
+        return details
+
+
+ref_finder = ReferenceFinder()
+DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])
+with open("/opt/lampp/htdocs/Blog/post views/view.php", "r") as file:
+    source = file.read().replace("\n", " ")
+source = re.sub(r"<!--(.*?)-->", " ", source)
+ref_finder.get_links_details(source)

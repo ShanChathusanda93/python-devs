@@ -14,6 +14,7 @@ file_creation_map = dict()
 def incl_tree(file_name, target_dir_path):
     global file_tree
     global file_creation_map
+
     reference_finder = ReferenceFinder()
     with open(file_name) as source_file:
         source = source_file.read()

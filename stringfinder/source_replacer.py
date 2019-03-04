@@ -1,6 +1,7 @@
 import os
 import re
 
+from dataobjects.detail_keeper_do import DetailsKeeperDO
 from filehandler.file_migrator import FileMigrator
 from stringfinder.reference_finder import ReferenceFinder
 
@@ -115,3 +116,46 @@ class SourceReplacer:
         #           ) as file:
         #     file.write(source_code.prettify())
         return source_code
+
+    def replace_link_references(self, source_code):
+        reference_finder = ReferenceFinder()
+        avoided_file_list = DetailsKeeperDO.get_avoided_file_list(DetailsKeeperDO)
+        link_details = reference_finder.get_links_details(source_code)
+        for link_det in link_details:
+            if not "No File" in link_det[1]:
+                if any(link_det[1] in avoided_file for avoided_file in avoided_file_list):
+                    print("avoided file")
+                else:
+                    print("not avoided file. File sent to create an article.")
+
+            else:
+                print("External file is referenced.")
+                old_link = "<a" + link_det[2] + "/a>"
+                replacement_link = "<p><a href=\"" + link_det[0][3] + "\" target=\"_blank\" " \
+                                    "rel=\"noopener noreferrer\">" + link_det[0][6] + "</a></p>"
+                source_code = source_code.replace(old_link, replacement_link, source_code)
+        return source_code
+
+    def create_linked_articles(self, source_file_path):
+        reference_finder = ReferenceFinder()
+        with open(source_file_path, "r") as source_file:
+            source_code = source_file.read().replace("\n", " ")
+        source_code = source_code.replace("require_once", "include")
+        source_code = source_code.replace("require", "include")
+        source_code = re.sub(r"<!--(.*?)-->", " ", source_code)
+        include_counter = reference_finder.has_include(source_file_path)
+        if include_counter == 1:
+            source_code = self.replace_main_file_includes(source_code)
+        source_code = source_replacer.replace_media_references(source_code, source_file_path, "/opt/lampp/htdocs/Blog/")
+
+
+# src_rpl = SourceReplacer()
+# DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])
+# with open("/opt/lampp/htdocs/Blog/post views/view.php", "r") as file:
+#     source = file.read().replace("\n", " ")
+# source = re.sub(r"<!--(.*?)-->", " ", source)
+# details = src_rpl.replace_link_references(source)
+# for det in details:
+#     print(det[2])
+
+

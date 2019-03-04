@@ -200,16 +200,30 @@ class FilesDirectoryMaker:
                                  replace_string, source_code)
         return source_code
 
+    def create_article_file(self, source_file_path):
+        reference_finder = ReferenceFinder()
+        source_replacer = SourceReplacer()
+        with open(source_file_path, "r") as source_file:
+            source_code = source_file.read().replace("\n", " ")
+        source_code = source_code.replace("require_once", "include")
+        source_code = source_code.replace("require", "include")
+        include_counter = reference_finder.has_include(source_file_path)
+        if include_counter == 1:
+            source_code = self.replace_main_file_includes(source_code)
+        source_code = source_replacer.replace_media_references(source_code, source_file_path, "/opt/lampp/htdocs/Blog/")
+        source_code = source_replacer.replace_link_references(source_code)
+
+
 
 file_maker = FilesDirectoryMaker()
 # DetailsKeeperDO.set_source_dir_path(DetailsKeeperDO, "/opt/lampp/htdocs/Blog")
 # file_maker.create_main_module_file("/opt/lampp/htdocs/Blog/TreeTest/a.php")
 
-with open("/opt/lampp/htdocs/Blog/Login System/login_phpcode.php", "r") as file:
-    source = file.read().replace("\n", " ")
-DetailsKeeperDO.set_source_dir_path(DetailsKeeperDO, "/opt/lampp/htdocs/Blog")
-source = source.replace("require_once", "include")
-source = source.replace("require", "include")
-source = file_maker.replace_main_file_includes(source)
-print(source)
+# with open("/opt/lampp/htdocs/Blog/Login System/login_phpcode.php", "r") as file:
+#     source = file.read().replace("\n", " ")
+# DetailsKeeperDO.set_source_dir_path(DetailsKeeperDO, "/opt/lampp/htdocs/Blog")
+# source = source.replace("require_once", "include")
+# source = source.replace("require", "include")
+# source = file_maker.replace_main_file_includes(source)
+# print(source)
 
