@@ -184,9 +184,9 @@ class ReferenceFinder:
         return details
 
 
-ref_finder = ReferenceFinder()
-DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])
-with open("/opt/lampp/htdocs/Blog/post views/view.php", "r") as file:
-    source = file.read().replace("\n", " ")
-source = re.sub(r"<!--(.*?)-->", " ", source)
-ref_finder.get_links_details(source)
+# ref_finder = ReferenceFinder()
+# DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])
+# with open("/opt/lampp/htdocs/Blog/post views/view.php", "r") as file:
+#     source = file.read().replace("\n", " ")
+# source = re.sub(r"<!--(.*?)-->", " ", source)
+# ref_finder.get_links_details(source)

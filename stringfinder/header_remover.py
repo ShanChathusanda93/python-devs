@@ -10,5 +10,5 @@ def remove_html_header(source):
         header = re.findall('(<html>(.*?)<body>)', source)
         edited_source = source.replace("<html>" + header[0] + "<body>", " ")
     edited_source = edited_source.replace("</body>", " ")
-    edited_source = edited_source.replace("<html>", " ")
+    edited_source = edited_source.replace("</html>", " ")
     return edited_source

@@ -5,7 +5,7 @@ from filehandler.connection_creator import ConnectionCreator
 from filehandler.files_dir_maker import FilesDirectoryMaker
 from filehandler.file_detector import FileDetector
 from filehandler.FileParser import conversion_format_detector
-from stringfinder.HeaderRemover import remove_html_header
+from stringfinder.header_remover import remove_html_header
 from stringfinder.LoopDetector import LoopDetector
 from stringfinder.reference_finder import ReferenceFinder
 

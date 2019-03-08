@@ -4,6 +4,10 @@ import re
 from dataobjects.detail_keeper_do import DetailsKeeperDO
 from filehandler.file_migrator import FileMigrator
 from stringfinder.reference_finder import ReferenceFinder
+from filehandler.source_reader import SourceReader
+from stringfinder.header_remover import remove_html_header
+from stringfinder.hyperlink_tree_detector import create_nested_hyperlinked_articles
+from dbaccess.component_retriever import ComponentRetriever
 
 
 class SourceReplacer:
@@ -119,43 +123,83 @@ class SourceReplacer:
 
     def replace_link_references(self, source_code):
         reference_finder = ReferenceFinder()
+        component_retriever = ComponentRetriever()
+
         avoided_file_list = DetailsKeeperDO.get_avoided_file_list(DetailsKeeperDO)
         link_details = reference_finder.get_links_details(source_code)
         for link_det in link_details:
             if not "No File" in link_det[1]:
-                if any(link_det[1] in avoided_file for avoided_file in avoided_file_list):
-                    print("avoided file")
-                else:
+                if not any(link_det[1] in avoided_file for avoided_file in avoided_file_list):
                     print("not avoided file. File sent to create an article.")
-
+                    create_nested_hyperlinked_articles(link_det[1])
+                    base_name = os.path.basename(link_det[1])
+                    file_name = os.path.splitext(base_name)
+                    link_string = link_details[2].split(">")
+                    article_id = component_retriever.get_article_id("Article " + file_name[0])
+                    new_link_str = ' href="index.php?option=com_content&amp;view=article&amp;id=' + str(
+                        article_id) + ">" + link_string[1]
+                    source_code = source_code.replace(link_details[2], new_link_str)
             else:
                 print("External file is referenced.")
                 old_link = "<a" + link_det[2] + "/a>"
                 replacement_link = "<p><a href=\"" + link_det[0][3] + "\" target=\"_blank\" " \
-                                    "rel=\"noopener noreferrer\">" + link_det[0][6] + "</a></p>"
+                                                                      "rel=\"noopener noreferrer\">" + link_det[0][
+                                       6] + "</a></p>"
                 source_code = source_code.replace(old_link, replacement_link, source_code)
         return source_code
 
-    def create_linked_articles(self, source_file_path):
+    # def create_linked_articles(self, source_file_path):
+    #     reference_finder = ReferenceFinder()
+    #     with open(source_file_path, "r") as source_file:
+    #         source_code = source_file.read().replace("\n", " ")
+    #     source_code = source_code.replace("require_once", "include")
+    #     source_code = source_code.replace("require", "include")
+    #     source_code = re.sub(r"<!--(.*?)-->", " ", source_code)
+    #     include_counter = reference_finder.has_include(source_file_path)
+    #     if include_counter == 1:
+    #         source_code = self.replace_main_file_includes(source_code)
+    #     source_code = source_replacer.replace_media_references(source_code, source_file_path,
+    #     "/opt/lampp/htdocs/Blog/")
+
+    def replace_styles(self, source_code):
         reference_finder = ReferenceFinder()
-        with open(source_file_path, "r") as source_file:
-            source_code = source_file.read().replace("\n", " ")
-        source_code = source_code.replace("require_once", "include")
-        source_code = source_code.replace("require", "include")
-        source_code = re.sub(r"<!--(.*?)-->", " ", source_code)
-        include_counter = reference_finder.has_include(source_file_path)
-        if include_counter == 1:
-            source_code = self.replace_main_file_includes(source_code)
-        source_code = source_replacer.replace_media_references(source_code, source_file_path, "/opt/lampp/htdocs/Blog/")
+        external_styles = re.findall("<link(.*?)>", source_code)
+        if external_styles.__len__() > 0:
+            with open("/opt/lampp/htdocs/JoomlaResearchTest/templates/protostar/css/template.css", "r") as styles_file:
+                styles = styles_file.read()
+            for external in external_styles:
+                base_name = os.path.basename(external)
+                file_name = os.path.splitext(base_name)
+                styles = styles + "\n/* Styles for " + file_name[0] + " */\n"
+                reference = re.findall(r"href(\s*)=(\s*)(\'|\")(.*?)(\'|\")", external)
+                print(reference[0][3])
+                full_reference_path = reference_finder.get_complete_path(reference[0][3], [
+                    "/opt/lampp/htdocs/Blog/Template/CSS/frontend.css"])
+                if full_reference_path != "No File":
+                    with open(full_reference_path, "r") as source_style_file:
+                        source_style = source_style_file.read()
+                    styles = styles + source_style
+            with open("/opt/lampp/htdocs/JoomlaResearchTest/templates/protostar/css/template.css", "w") as target_file:
+                target_file.write(styles)
+            remove_html_header(source_code)
+        internal_styles = re.findall("<style>(.*?)</style>", source_code)
+        if internal_styles.__len__() > 0:
+            style_string = ""
+            for internal in internal_styles:
+                style_string = style_string + internal
+            style_string = "{source}\n" + style_string + "{/source}"
+            source_code = remove_html_header(source_code)
+            source_code = style_string + "\n" + source_code
+        return source_code
 
 
 # src_rpl = SourceReplacer()
 # DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])
-# with open("/opt/lampp/htdocs/Blog/post views/view.php", "r") as file:
+# with open("/opt/lampp/htdocs/Blog/TreeTest/a.php", "r") as file:
 #     source = file.read().replace("\n", " ")
 # source = re.sub(r"<!--(.*?)-->", " ", source)
 # details = src_rpl.replace_link_references(source)
 # for det in details:
 #     print(det[2])
-
-
+# final = src_rpl.replace_styles(source)
+# print(final)
