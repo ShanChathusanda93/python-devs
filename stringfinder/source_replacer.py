@@ -2,12 +2,11 @@ import os
 import re
 
 from dataobjects.detail_keeper_do import DetailsKeeperDO
+from dbaccess.component_retriever import ComponentRetriever
 from filehandler.file_migrator import FileMigrator
-from stringfinder.reference_finder import ReferenceFinder
-from filehandler.source_reader import SourceReader
 from stringfinder.header_remover import remove_html_header
 from stringfinder.hyperlink_tree_detector import create_nested_hyperlinked_articles
-from dbaccess.component_retriever import ComponentRetriever
+from stringfinder.reference_finder import ReferenceFinder
 
 
 class SourceReplacer:
@@ -191,7 +190,6 @@ class SourceReplacer:
             source_code = remove_html_header(source_code)
             source_code = style_string + "\n" + source_code
         return source_code
-
 
 # src_rpl = SourceReplacer()
 # DetailsKeeperDO.set_avoided_file_list(DetailsKeeperDO, ["/opt/lampp/htdocs/Blog/post views/view_posttext.php"])

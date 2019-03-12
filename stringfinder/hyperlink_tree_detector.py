@@ -143,5 +143,5 @@ def create_parent_article_file(file_path):
     # print("parent article created : " + file_path)
 
 
-create_nested_hyperlinked_articles("/opt/lampp/htdocs/Blog/TreeTest/a.php")
+# create_nested_hyperlinked_articles("/opt/lampp/htdocs/Blog/TreeTest/a.php")
 # print_tree()
